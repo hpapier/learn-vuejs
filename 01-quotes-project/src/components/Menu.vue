@@ -9,7 +9,7 @@
     <transition name="menu-fade" tag="div">
       <div id="menu-option" v-show="show">
         <button id="menu-option-add" v-on:click="$emit('showModal')">Add fun fact</button>
-        <button id="menu-option-remove">Remove fun fact</button>
+        <button id="menu-option-remove" v-on:click="$emit('showRmvModal')">Remove fun fact</button>
       </div>
     </transition>
   </div>
@@ -143,7 +143,6 @@ export default {
   #menu-option-add:hover,
   #menu-option-remove:hover {
     opacity: 1;
-    /* background: rgba(44, 62, 80, .9); */
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
   }
 </style>

@@ -1,20 +1,26 @@
 <template>
   <div id="app">
-    <menu-component v-on:showModal="toggleModal"></menu-component>
+    <menu-component v-on:showModal="toggleModal" v-on:showRmvModal="toggleRmvModal"></menu-component>
     <add-modal
       v-if="addModal"
       v-on:addModalOff="toggleModal"
       v-on:addFact="addFact"
     >
     </add-modal>
-    <remove-modal v-if="rmvModal"></remove-modal>
+    <remove-modal
+      v-if="rmvModal"
+      v-bind:facts="funFacts"
+      v-on:removeModalOff="toggleRmvModal"
+      v-on:removeFact="removeFact"
+    >
+    </remove-modal>
     <div id="app-fact-box">
       <div id="app-fact-box-title">Fun fact:</div>
       <transition name="fade" class="fade" appear mode="out-in">
-        <span id="app-fact-box-content" v-bind:key="factIndex">{{ currentFact.content }}</span>
+        <span id="app-fact-box-content" v-bind:key="factIndex">{{ currentFact }}</span>
       </transition>
-      <button id="app-fact-box-pushup" v-if="!currentFact.pushUp" v-on:click="pushUp">Push Up</button>
-      <button id="app-fact-box-pushdown" v-if="currentFact.pushUp" v-on:click="pushDown">Push Down</button>
+      <button id="app-fact-box-pushup" v-if="!funFacts[factIndex].pushUp" v-on:click="pushUp">Push Up</button>
+      <button id="app-fact-box-pushdown" v-if="funFacts[factIndex].pushUp" v-on:click="pushDown">Push Down</button>
     </div>
     <button id="app-fact-change" v-on:click="showAnotherFact">Show another fact !</button>
   </div>
@@ -84,7 +90,12 @@ export default {
   },
   computed: {
     currentFact: function() {
-      return this.funFacts[this.factIndex];
+      if (this.funFacts.length === 0)
+        return 'No fun fact yet.';
+      else if (this.factIndex > this.funFacts.length - 1)
+        return this.funFacts[this.funFacts.length - 1].content;
+
+      return this.funFacts[this.factIndex].content;
     }
   },
   methods: {
@@ -109,6 +120,14 @@ export default {
 
     addFact: function(item) {
       this.funFacts.push({ content: item, pushUp: 0 });
+    },
+
+    toggleRmvModal: function() {
+      this.rmvModal = !this.rmvModal;
+    },
+
+    removeFact: function(factIndex) {
+      this.funFacts = this.funFacts.filter(item => item !== factIndex);
     }
   } 
 }
