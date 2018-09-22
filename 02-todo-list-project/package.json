@@ -1,0 +1,48 @@
+{
+  "name": "02-todo-list-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "serv": "nodemon api/index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "vue": "^2.5.17"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.0.3",
+    "@vue/cli-plugin-eslint": "^3.0.3",
+    "@vue/cli-service": "^3.0.3",
+    "nodemon": "^1.18.4",
+    "vue-template-compiler": "^2.5.17"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
