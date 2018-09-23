@@ -5,13 +5,23 @@
     <button v-on:click="addItemToDb">ajouter</button>
     <div v-if="initLoading">Loading</div>
     <struct-nav></struct-nav>
-    <todo-list v-bind:loading="initLoading" v-bind:list="items"></todo-list>
+
+    <todo-list
+      v-bind:loading="initLoading"
+      v-bind:list="items"
+      v-on:removeItem="removeItemToDb"
+      v-on:changeCompleteStatus="changeCompleteStatus"
+      v-bind:statusLoading="statusLoading"
+    >
+    </todo-list>
   </div>
 </template>
 
 <script>
 import TodoList from './components/TodoList.vue';
 import StructNav from './components/StructNav.vue';
+
+const APILINK = 'http://localhost:5000';
 
 export default {
   name: 'app',
@@ -25,12 +35,13 @@ export default {
       initLoading: true,
       postLoading: false,
       removeLoading: false,
+      statusLoading: false,
       items: [],
       mode: 'all',
     };
   },
   mounted: function() {
-    fetch('http://localhost:5000/api/get/item', {
+    fetch(`${APILINK}/api/get/item`, {
       method: 'GET',
       headers: { 'Content-type': 'application/json' }
     })
@@ -71,7 +82,41 @@ export default {
         this.errorMsg = 'Oups! Une erreur est survenue..';
         this.postLoading = false;
       });
-    }
+    },
+    removeItemToDb: function(item) {
+      fetch(`${APILINK}/api/remove/item`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: item })
+      })
+      .then(r => r.json())
+      .then(({ data }) => {
+        this.items = data.items;
+      })
+      .catch(error => console.log(error));
+    },
+
+    changeCompleteStatus: function(item) {
+      console.log(this.statusLoading);
+      if (this.statusLoading) {
+        return;
+      }
+
+      this.statusLoading = true;
+      fetch(`${APILINK}/api/update/item/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: item })
+      })
+      .then(r => r.json())
+      .then(({ data }) => {
+        this.items = data.items;
+        this.statusLoading = false;
+      })
+      .catch(error => {
+        this.statusLoading = false;
+      });
+    },
   }
 }
 </script>
@@ -85,4 +130,8 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 } */
+
+body {
+  background: #f2f4f7;
+}
 </style>

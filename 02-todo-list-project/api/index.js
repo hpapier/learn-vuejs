@@ -43,15 +43,19 @@ const Data = {
       return false;
     }
   },
-  changeItemCompleteStatus: toChange => {
+  changeItemCompleteStatus: (toChange, response) => {
     const data = Data.getItem();
     const items = JSON.stringify({ items: data.items.map(item => ({ ...item, complete: (toChange.id === item.id) ? !toChange.complete : item.complete }))});
-    try {
-      fs.writeFileSync(path.resolve(__dirname, './data.json'), items);
-      return Data.getItem();
-    } catch (e) {
-      return false;
-    }
+    fs.exists(path.resolve(__dirname, './data.json'), (exists) => {
+      if (exists) {
+        fs.writeFile(path.resolve(__dirname, './data.json'), items, 'utf8', (err, res) => {
+          response.send({ data: Data.getItem() });
+          return Data.getItem();
+        })
+      } else {
+        return Data.getItem();
+      }
+    })
   },
   changeItemFavStatus: toChange => {
     const data = Data.getItem();
@@ -89,10 +93,10 @@ app.delete('/api/remove/item', (req, res) => {
   res.send({ data: Data.removeItem(req.body.data) });
 });
 
-app.put('/api/update/item/complete', (req, res) => {
+app.post('/api/update/item/complete', (req, res) => {
   res.status(200);
   res.setHeader('Content-type', 'application/json');
-  res.send({ data: Data.changeItemCompleteStatus(req.body.data) });
+  Data.changeItemCompleteStatus(req.body.data, res)
 });
 
 app.put('/api/update/item/fav', (req, res) => {
